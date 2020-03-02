@@ -51,7 +51,7 @@ if(validators.url(url)):
     #searching for  all comments
     comments = parsed_html.find_all(string=lambda text: isinstance(text,Comment))
     #Searching for input in javascript that has name and password
-    password_input = parsed_html.find_all('input', {'name': 'password'})
+    password_inputs = parsed_html.find_all('input', {'name': 'password'})
 
     """
     This is where we grab the config dictionaries. For example since by default all config
