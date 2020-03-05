@@ -1,0 +1,6 @@
+status,protocol,domain
+True,http,www.google.com
+False,https,www.badweb.com
+False,http,www.xxx.com
+True,http,www.youtube.com
+True,http,www.amazon.com
