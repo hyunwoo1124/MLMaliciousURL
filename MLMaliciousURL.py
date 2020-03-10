@@ -2,6 +2,7 @@ import argparse
 import requests
 import validators
 import yaml
+import pandas as pd
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup, Comment
 
