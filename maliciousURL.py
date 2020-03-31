@@ -24,6 +24,9 @@ from sklearn.metrics import confusion_matrix, classification_report
 
 #import seaborn as sns
 
+
+
+
 # Loading the data utilizing pandas
 
 print("Loading CSV Data...")
@@ -50,20 +53,21 @@ print("Testing Data Sample:  {}".format(len(test_df)))
 
 # This is where we generate a bar graph...
 
+# getting count of actual train set and test set
 barGraphTrain = pd.value_counts(train_df['Class'])
-barGraphTrain.plot(kind='bar', fontsize=16)
-plt.title("Class Count of Training ", fontsize = 20)
-plt.xticks(rotation="horizontal")
-plt.xlabel("Class", fontsize=20)
-plt.ylabel("Class Count", fontsize=20)
-
-plt.show()
-
 barGraphTest = pd.value_counts(test_df['Class'])
-barGraphTest.plot(kind='bar', fontsize=16, colormap='ocean')
-plt.title("Class Count of Testing ", fontsize = 20)
-plt.xticks(rotation='horizontal')
-plt.xticks("Class", fontsize = 20)
-plt.yticks("Class Count", fontsiez = 20)
 
+N = 2
+ind = np.arange(N)
+width = 0.35
+
+plt.bar(ind, barGraphTrain, width, label='Train')
+plt.bar(ind + width, barGraphTest, width, label = 'Test')
+
+plt.ylabel('Data sets')
+plt.xlabel('Training/Testing')
+plt.title('Good and Bad URL datasets')
+plt.xticks(ind + width /2, ('Train', 'Test'))
+plt.legend(loc='best')
 plt.show()
+
