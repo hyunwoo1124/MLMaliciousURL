@@ -3,7 +3,6 @@
 import pandas as pd                                                             # Handles csv files
 import numpy as np                                                              # array
 
-
 import matplotlib.pyplot as plt                                                 # Graph generating library
 
 import random                                                                   # importing random and regEx
@@ -20,6 +19,10 @@ from sklearn.metrics import confusion_matrix, classification_report             
 #import seaborn as sns
 
 
+"""
+csvImports Description:
+    opens the csv file and store it using pandas.
+"""
 def csvImport():
     # Loading the data utilizing pandas
 
@@ -34,7 +37,11 @@ def csvImport():
     print(url_df.head())
 
     return url_df, test_url
-
+"""
+train_test Description:
+    @param: url_df: takes the sample.csv and store it in an pandas array
+    split the url into training and testing in respective to 80% and 20%
+"""
 def train_test(url_df):
     # Train = 80% and test = 20%
     test_percentage = .2
@@ -46,8 +53,6 @@ def train_test(url_df):
     #test_labels = test_df['Class']
     
     print("\n#####Spliting Train and Testing...##### \n")
-    print("#                                          #")
-    print("############################################")
 
     # number set to show before bar graph
     print("\nCounting splited data frames...\n")
@@ -56,7 +61,11 @@ def train_test(url_df):
 
     return train_df, test_df
 
-
+"""
+train_test_graph Description:
+    @param: train_df: takes the train_df from train_test method and generate a graph using mathplotlib.py
+    @param: test_df: takes the test_df from train_test method and generate a graph using mathplotlib.py
+"""
 def train_test_graph(train_df, test_df):
     # This is where we generate a bar graph...
 
@@ -79,8 +88,10 @@ def train_test_graph(train_df, test_df):
     plt.legend(loc='best')
     plt.show()
 
-
-# Implementing tokenizer for the URL
+"""
+tokenizerURL Description:
+    @param url: takes one of the url from csvImport method from test_url and tokenize the url
+"""
 def tokenizerURL(url):
     """
     This method will split the url into tokenized forms:
@@ -116,6 +127,33 @@ def tokenizerURL(url):
     print ("Tokenizer in transit...\n")
 
 
+def vectorizer(train_df,test_df):
+     
+    countVec = CountVectorizer(tokenizer= tokenizerURL)
+    tfidfVec= TfidfVectorizer(tokenizer=tokenizerURL)
+
+    print("\nVectorizng data frames.... may take about a minute...\n")
+
+    print("\nTraining Count Vectorizer...\n")
+    countVecTrain_X = countVec.fit_transform(train_df['URLs'])
+
+    print("\nTraining TF-IDF Vectorizer...\n")
+    tfidfVecTran_X = tfidfVec.fit_transform(train_df['URLs'])
+
+    print("\nTesting Count Vectorizer...\n")
+    countVecTest_x = countVec.fit_transform(test_df['URLs'])
+    print("\nTesting TFIDF Vectorizer...\n")
+    tfidfVecTest_x = tfidfVec.fit_transform(test_df['URLs'])
+
+    print("\nVectorizing complete...\n")
+
+    
+   
+
+"""
+main Description
+    Calls the respective methods and return call by function method
+"""
 def main():
     url_df, test_url = csvImport()
     train_df, test_df = train_test(url_df)
@@ -128,7 +166,11 @@ def main():
     tokenized_url = tokenizerURL(test_url)
     print(tokenized_url)
 
+    vectorizer(train_df,test_df)
 
+"""
+Calling main
+"""
 if __name__ == '__main__':
     main()
 
