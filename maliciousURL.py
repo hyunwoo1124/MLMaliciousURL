@@ -16,7 +16,7 @@ from sklearn.naive_bayes import MultinomialNB
 # helper library to use metric functions
 from sklearn.metrics import confusion_matrix, classification_report             # helper library to use metric functions
 
-#import seaborn as sns
+import seaborn as sns
 
 
 """
@@ -49,8 +49,8 @@ def train_test(url_df):
     # data must be split between training and testing the sample
     train_df, test_df = train_test_split(url_df, test_size = test_percentage, random_state = 42)
 
-    #labels = train_df['Class']
-    #test_labels = test_df['Class']
+    labels = train_df['Class']
+    test_labels = test_df['Class']
     
     print("\n#####Spliting Train and Testing...##### \n")
 
@@ -59,7 +59,7 @@ def train_test(url_df):
     print("Training Data Sample: {}".format(len(train_df)))
     print("Testing Data Sample:  {}".format(len(test_df)))
 
-    return train_df, test_df
+    return train_df, test_df, labels, test_labels
 
 """
 train_test_graph Description:
@@ -135,20 +135,52 @@ def vectorizer(train_df,test_df):
     print("\nVectorizng data frames.... may take about a minute...\n")
 
     print("\nTraining Count Vectorizer...\n")
-    countVecTrain_X = countVec.fit_transform(train_df['URLs'])
+    countVecTrain_x = countVec.fit_transform(train_df['URLs'])
 
     print("\nTraining TF-IDF Vectorizer...\n")
-    tfidfVecTran_X = tfidfVec.fit_transform(train_df['URLs'])
+    tfidfVecTrain_x = tfidfVec.fit_transform(train_df['URLs'])
 
     print("\nTesting Count Vectorizer...\n")
-    countVecTest_x = countVec.fit_transform(test_df['URLs'])
+    countVecTest_x = countVec.transform(test_df['URLs'])
     print("\nTesting TFIDF Vectorizer...\n")
-    tfidfVecTest_x = tfidfVec.fit_transform(test_df['URLs'])
+    tfidfVecTest_x = tfidfVec.transform(test_df['URLs'])
 
     print("\nVectorizing complete...\n")
 
+    return countVecTrain_x, tfidfVecTrain_x, countVecTest_x, tfidfVecTest_x
+
+def algorithmReport(confuMatrix, score, classReport):
+    plt.figure(figsize=(5,5))
+    sns.heatmap(confuMatrix, annot=True, fmt="d", lineWidths=.5,square = True, cmap ='Blues', annot_kws={"size": 16}, xtickLabels=['bad','good'], ytickLabels=['bad', 'good'])
     
-   
+    plt.xticks(rotation = 'horizontal', fontsize=16)
+    plt.yticks(rotation = 'horizontal', fontsize=16)
+    plt.xlabel('Actual label', size = 20)
+    plt.ylabel('Predicted Label', size = 20)
+
+    title = 'Accuracy Score:  {0:.4}'.format(score)
+    plt.title(title, size = 20)
+
+    print(classReport)
+    plt.show()
+
+    print("\nReport Generator Defined...\n")
+
+def LogicRegTFIDF(labels, test_labels, countVecTrain_x, tfidfVecTrain_x, countVecTest_x, tfidfVecTest_x):
+    # Training the Logistic Regression Algorithm
+
+    LR_Tfidf = LogisticRegression(solver ='lbfgs')
+    LR_Tfidf.fit(tfidfVecTrain_x, labels)
+
+    score_LR_Count = LR_Tfidf.score(tfidfVecTest_x, test_labels)
+    predictionsLRTfidf = LR_Tfidf.predict(tfidfVecTest_x)
+    cmatrixLRTfidf = confusion_matrix(predictionsLRTfidf, test_labels)
+    classReport_LRTfidf = classification_report(predictionsLRTfidf, test_labels)
+
+    print("\nModel generating...\n")
+    print("Logistic Regression w/ TfidfVectorizer")
+    algorithmReport(cmatrixLRTfidf, score_LR_Count, classReport_LRTfidf)
+    
 
 """
 main Description
@@ -156,7 +188,7 @@ main Description
 """
 def main():
     url_df, test_url = csvImport()
-    train_df, test_df = train_test(url_df)
+    train_df, test_df, labels, test_labels = train_test(url_df)
     train_test_graph(train_df,test_df)
     
     print("Full URL from the sample...\n")
@@ -166,7 +198,9 @@ def main():
     tokenized_url = tokenizerURL(test_url)
     print(tokenized_url)
 
-    vectorizer(train_df,test_df)
+    countVecTrain_x, tfidfVecTrain_x, countVecTest_x, tfidfVecTest_x = vectorizer(train_df, test_df)
+    LogicRegTFIDF(labels, test_labels, countVecTrain_x, tfidfVecTrain_x, countVecTest_x, tfidfVecTest_x)
+
 
 """
 Calling main
@@ -174,6 +208,6 @@ Calling main
 if __name__ == '__main__':
     main()
 
-
-
+# Andrew - MN Baysian
+# Alex - 
 
