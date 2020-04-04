@@ -151,7 +151,7 @@ def vectorizer(train_df,test_df):
 
 def algorithmReport(confuMatrix, score, classReport):
     plt.figure(figsize=(5,5))
-    sns.heatmap(confuMatrix, annot=True, fmt="d", lineWidths=.5,square = True, cmap ='Blues', annot_kws={"size": 16}, xtickLabels=['bad','good'], ytickLabels=['bad', 'good'])
+    sns.heatmap(confuMatrix, annot=True, fmt="d", lineWidths=.5,square = True, cmap ='Blues', annot_kws={"size": 16}, xticklabels=['bad','good'], yticklabels=['bad', 'good'])
     
     plt.xticks(rotation = 'horizontal', fontsize=16)
     plt.yticks(rotation = 'horizontal', fontsize=16)
