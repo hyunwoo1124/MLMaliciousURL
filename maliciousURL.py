@@ -69,6 +69,7 @@ train_test_graph Description:
 def train_test_graph(train_df, test_df):
     # This is where we generate a bar graph...
 
+    
     print("\n#####Generating testing and training graph#####\n")
     # getting count of actual train set and test set
     barGraphTrain = pd.value_counts(train_df['Class'])
@@ -86,8 +87,9 @@ def train_test_graph(train_df, test_df):
     plt.title('Good and Bad URL datasets')
     plt.xticks(ind + width /2, ('Train', 'Test'))
     plt.legend(loc='best')
+    #plt.ion()
+    #plt.show(block=True)
     plt.show()
-
 """
 tokenizerURL Description:
     @param url: takes one of the url from csvImport method from test_url and tokenize the url
@@ -150,6 +152,9 @@ def vectorizer(train_df,test_df):
     return countVecTrain_x, tfidfVecTrain_x, countVecTest_x, tfidfVecTest_x
 
 def algorithmReport(confuMatrix, score, classReport):
+
+    confuMatrix = confuMatrix.T
+
     plt.figure(figsize=(5,5))
     sns.heatmap(confuMatrix, annot=True, fmt="d", lineWidths=.5,square = True, cmap ='Blues', annot_kws={"size": 16}, xticklabels=['bad','good'], yticklabels=['bad', 'good'])
     
@@ -162,11 +167,12 @@ def algorithmReport(confuMatrix, score, classReport):
     plt.title(title, size = 20)
 
     print(classReport)
-    plt.show()
+    plt.ion()
+    plt.show(block=True)
 
     print("\nReport Generator Defined...\n")
 
-def LogicRegTFIDF(labels, test_labels, countVecTrain_x, tfidfVecTrain_x, countVecTest_x, tfidfVecTest_x):
+def LogicRegTFIDF(labels, test_labels,  tfidfVecTrain_x,  tfidfVecTest_x):
     # Training the Logistic Regression Algorithm
 
     LR_Tfidf = LogisticRegression(solver ='lbfgs')
@@ -181,6 +187,60 @@ def LogicRegTFIDF(labels, test_labels, countVecTrain_x, tfidfVecTrain_x, countVe
     print("Logistic Regression w/ TfidfVectorizer")
     algorithmReport(cmatrixLRTfidf, score_LR_Count, classReport_LRTfidf)
     
+# Logistic Regression with Vector Count
+def LogRegression_CountVector (labels, test_labels, countVecTrain_x, countVecTest_x):
+    #train model
+    LR_CountVector = LogisticRegression(solver='lbfgs')
+    LR_CountVector.fit(countVecTrain_x, labels)
+
+    #test the mode (score, predictions, confusion matrix, classiificattion report)
+    score_LR_CountVector = LR_CountVector.score (countVecTest_x, test_labels)
+    predictionsCountVector = LR_CountVector.predict(countVecTest_x)
+    cmatrixCountVector = confusion_matrix(test_labels, predictionsCountVector)
+    creportCountVector = classification_report(test_labels,predictionsCountVector)
+
+    print("\nModel generating...\n")
+    print("Logistic Regression w/ Count Vector")
+    algorithmReport(cmatrixCountVector, score_LR_CountVector, creportCountVector)
+
+
+def mnbtf(labels, test_labels, tfidfVecTrain_X, tfidfVecTest_x):
+       # Multinomial Naive Bayesian with TF-IDF
+ 
+   # Train the model
+    mnb_tfidf = MultinomialNB()
+    mnb_tfidf.fit(tfidfVecTrain_X, labels)
+    
+    
+    # Test the mode (score, predictions, confusion matrix, classification report)
+    score_mnb_tfidf = mnb_tfidf.score(tfidfVecTest_x, test_labels)
+    predictions_mnb_tfidf = mnb_tfidf.predict(tfidfVecTest_x)
+    cmatrix_mnb_tfidf = confusion_matrix(test_labels, predictions_mnb_tfidf)
+    creport_mnb_tfidf = classification_report(test_labels, predictions_mnb_tfidf)
+    
+    print("\n### Model Built ###\n")
+    print("\nModel generating...\n")
+    print("Multinomial Naive Bayesian w/ TFIDF")
+    algorithmReport(cmatrix_mnb_tfidf, score_mnb_tfidf, creport_mnb_tfidf)
+    
+def mbbcv(labels, test_labels, countVecTrain_x, countVecTest_x):
+    # Multinomial Naive Bayesian with Count Vectorizer
+
+    # Train the model
+    mnb_count = MultinomialNB()
+    mnb_count.fit(countVecTrain_x, labels)
+
+
+    # Test the mode (score, predictions, confusion matrix, classification report)
+    score_mnb_count = mnb_count.score(countVecTest_x, test_labels)
+    predictions_mnb_count = mnb_count.predict(countVecTest_x)
+    cmatrix_mnb_count = confusion_matrix(test_labels, predictions_mnb_count)
+    creport_mnb_count = classification_report(test_labels, predictions_mnb_count)
+
+    print("\n### Model Built ###\n")
+    print("\nModel generating...\n")
+    print("Multinomial Naive Bayesian w/ Count Vectorizer")
+    algorithmReport(cmatrix_mnb_count, score_mnb_count, creport_mnb_count)
 
 """
 main Description
@@ -198,8 +258,12 @@ def main():
     tokenized_url = tokenizerURL(test_url)
     print(tokenized_url)
 
+    
     countVecTrain_x, tfidfVecTrain_x, countVecTest_x, tfidfVecTest_x = vectorizer(train_df, test_df)
-    LogicRegTFIDF(labels, test_labels, countVecTrain_x, tfidfVecTrain_x, countVecTest_x, tfidfVecTest_x)
+    LogicRegTFIDF(labels, test_labels, tfidfVecTrain_x,  tfidfVecTest_x)
+    LogRegression_CountVector(labels, test_labels, countVecTrain_x, countVecTest_x)
+    mnbtf(labels, test_labels, tfidfVecTrain_x,  tfidfVecTest_x)
+    mbbcv(labels, test_labels, countVecTrain_x,  countVecTest_x)
 
 
 """
@@ -208,6 +272,4 @@ Calling main
 if __name__ == '__main__':
     main()
 
-# Andrew - MN Baysian
-# Alex - 
 

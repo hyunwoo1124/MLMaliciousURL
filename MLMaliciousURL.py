@@ -12,6 +12,7 @@ For example -h will bring help page, -v will bring version... This is what im do
 underneath
 """
 
+
 parser = argparse.ArgumentParser(description='Machine Learning Malicious URL Detector Version 1.0')
 parser.add_argument('-v', '--version', action='version', version='%(prog)s 1.0')
 parser.add_argument('-url', type=str, help='Type the URL to be analyzed')
