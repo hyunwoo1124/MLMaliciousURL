@@ -19,6 +19,10 @@ from sklearn.metrics import confusion_matrix, classification_report             
 import seaborn as sns
 
 import argparse
+from threading import *
+
+
+
 """
 csvImports Description:
     opens the csv file and store it using pandas.
@@ -29,14 +33,11 @@ def csvImport():
     print("#####Loading CSV Data...#####")
     url_df = pd.read_csv("sample.csv")
 
-    # Only taking URLs stored to test_url
-    test_url = url_df['URLs'][4]
-
-
     print("\nSample of our data of {}".format(len(url_df)))
     print(url_df.head())
 
-    return url_df, test_url
+    return url_df
+
 """
 train_test Description:
     @param: url_df: takes the sample.csv and store it in an pandas array
@@ -247,7 +248,12 @@ main Description
     Calls the respective methods and return call by function method
 """
 def main(lt, lc, mt, mc):
-    url_df, test_url = csvImport()
+
+    test_url = input("\n\nPlease input test URL or press Enter use default test URL:")
+    if test_url == '':
+        test_url = 'ussoccer.com/News/Federation-Services/2009/06/University-Of-Miami-President-Donna-E-Shalala-Joins-Team-To-Bring-FIFA-World-Cup-To-United-States-In.aspx'
+
+    url_df = csvImport()
     train_df, test_df, labels, test_labels = train_test(url_df)
     train_test_graph(train_df,test_df)
     
@@ -273,7 +279,7 @@ def main(lt, lc, mt, mc):
 """
 Calling main
 """
-parser = argparse.ArgumentParser(description='MLMaliciousURL')
+parser = argparse.ArgumentParser(description='MLMaliciousURL Program')
 parser.add_argument('-lt','--lt', metavar='', help='LogicRegTFIDF')
 parser.add_argument('-lc','--lc', metavar='', help='LogRegression_CountVector')
 parser.add_argument('-mt','--mt', metavar='', help='mnbtf')
@@ -287,10 +293,10 @@ args =  parser.parse_args()
 
 if __name__ == '__main__':
     if args.quiet:
-        print('quiet')
+        # print('quiet')
         main(args.lt, args.lc, args.mt, args.mc)
     elif args.verbose:
-        print('verbose')
+        # print('verbose')
         main(args.lt, args.lc, args.mt, args.mc)
     else:
         print(
