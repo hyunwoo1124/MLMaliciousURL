@@ -285,31 +285,32 @@ parser.add_argument('-lc','--lc', metavar='', help='LogRegression_CountVector')
 parser.add_argument('-mt','--mt', metavar='', help='mnbtf')
 parser.add_argument('-mc','--mc', metavar='', help='mbbcv')
 
-group = parser.add_mutually_exclusive_group()
-group.add_argument ('-q', '--quiet', action='store_true', help='print quiet')
-group.add_argument ('-v', '--verbose', action='store_true', help='print verbose')
+# group = parser.add_mutually_exclusive_group()
+# group.add_argument ('-q', '--quiet', action='store_true', help='print quiet')
+# group.add_argument ('-v', '--verbose', action='store_true', help='print verbose')
 
 args =  parser.parse_args()
 
 if __name__ == '__main__':
-    if args.quiet:
+    # if args.quiet:
         # print('quiet')
-        main(args.lt, args.lc, args.mt, args.mc)
-    elif args.verbose:
+        # main(args.lt, args.lc, args.mt, args.mc)
+    # elif args.verbose:
         # print('verbose')
+        # main(args.lt, args.lc, args.mt, args.mc)
+    # else:
         main(args.lt, args.lc, args.mt, args.mc)
-    else:
-        print(
-        """
-            run in commandline: python .\maliciousURL.py
-            Add '-q' for run 1 test and '-v' for multiple test
-            Add '-lt lt' for LogicRegTFIDF test
-            Add '-lc lc' for LogRegression_CountVector test
-            Add '-mt mt' for mnbtf test
-            Add '-mc mc' for mbbcv test
+        # print(
+        # """
+        #     run in commandline: python .\maliciousURL.py
+        #     Add '-q' for run 1 test and '-v' for multiple test
+        #     Add '-lt lt' for LogicRegTFIDF test
+        #     Add '-lc lc' for LogRegression_CountVector test
+        #     Add '-mt mt' for mnbtf test
+        #     Add '-mc mc' for mbbcv test
 
-        """
-        )
+        # """
+        # )
 
 
 
