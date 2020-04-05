@@ -2,6 +2,7 @@ import argparse
 import requests
 import validators
 import yaml
+import pandas as pd
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup, Comment
 
@@ -10,6 +11,7 @@ The following code is basically a clean version of the parsing cmd line interfac
 For example -h will bring help page, -v will bring version... This is what im doing
 underneath
 """
+
 
 parser = argparse.ArgumentParser(description='Machine Learning Malicious URL Detector Version 1.0')
 parser.add_argument('-v', '--version', action='version', version='%(prog)s 1.0')
