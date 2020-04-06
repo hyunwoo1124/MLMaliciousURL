@@ -18,11 +18,11 @@ from sklearn.metrics import confusion_matrix, classification_report             
 
 import seaborn as sns
 
-
 """
 csvImports Description:
     opens the csv file and store it using pandas.
 """
+
 def csvImport():
     # Loading the data utilizing pandas
 
@@ -86,7 +86,8 @@ def train_test_graph(train_df, test_df):
     plt.title('Good and Bad URL datasets')
     plt.xticks(ind + width /2, ('Train', 'Test'))
     plt.legend(loc='best')
-    plt.show()
+    plt.show(block=False)
+    
 
 """
 tokenizerURL Description:
@@ -152,7 +153,7 @@ def vectorizer(train_df,test_df):
 def algorithmReport(confuMatrix, score, classReport):
     plt.figure(figsize=(5,5))
     sns.heatmap(confuMatrix, annot=True, fmt="d", lineWidths=.5,square = True, cmap ='Blues', annot_kws={"size": 16}, xticklabels=['bad','good'], yticklabels=['bad', 'good'])
-    
+    plt.title('Alogrithm Report')
     plt.xticks(rotation = 'horizontal', fontsize=16)
     plt.yticks(rotation = 'horizontal', fontsize=16)
     plt.xlabel('Actual label', size = 20)
@@ -160,11 +161,11 @@ def algorithmReport(confuMatrix, score, classReport):
 
     title = 'Accuracy Score:  {0:.4}'.format(score)
     plt.title(title, size = 20)
-
+    
     print(classReport)
-    plt.figure(1)
-
     print("\nReport Generator Defined...\n")
+    plt.show(block=True)
+    
 
 def LogicRegTFIDF(labels, test_labels, tfidfVecTrain_x, tfidfVecTest_x):
     # Training the Logistic Regression Algorithm
@@ -224,7 +225,4 @@ Calling main
 """
 if __name__ == '__main__':
     main()
-
-# Andrew - MN Baysian
-# Alex - 
 
