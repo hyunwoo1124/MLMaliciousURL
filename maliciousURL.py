@@ -238,9 +238,10 @@ def vectorizer(train_df,test_df):
 
     tfidfVecTest = T4(tfidfVec, test_df)
     tfidfVecTest.start()
-
+    
     countVecTrain_x = countVecTrain.join()
     tfidfVecTrain_x = tfidfVecTrain.join()
+
     countVecTest_x = countVecTest.join()
     tfidfVecTest_x = tfidfVecTest.join()
     
@@ -367,14 +368,119 @@ def main(lt, lc, mt, mc):
 
     
     countVecTrain_x, tfidfVecTrain_x, countVecTest_x, tfidfVecTest_x = vectorizer(train_df, test_df)
+
+# ===============================
+
+    class T1 (Thread):
+        def __init__ (self, labels, test_labels, tfidfVecTrain_x, tfidfVecTest_x):
+            Thread.__init__(self)
+            self.labels = labels
+            self.test_labels = test_labels
+            self.tfidfVecTrain_x = tfidfVecTrain_x
+            self.tfidfVecTest_x = tfidfVecTest_x
+
+        def run(self):
+            print("\nThread 1 - LogicRegTFIDF...\n")
+            LogicRegTFIDF (self.labels, self.test_labels, self.tfidfVecTrain_x, self.tfidfVecTest_x)
+
+       
+    class T2 (Thread):
+        def __init__ (self, labels, test_labels, countVecTrain_x, countVecTest_x):
+            Thread.__init__(self)
+            self.labels = labels
+            self.test_labels = test_labels
+            self.countVecTrain_x = countVecTrain_x
+            self.countVecTest_x = countVecTest_x
+
+        def run(self):
+            print("\nThread 2 - LogRegression_CountVector...\n")
+            LogRegression_CountVector(labels, test_labels, countVecTrain_x, countVecTest_x)
+            
+
+
+    class T3 (Thread):
+        def __init__ (self, labels, test_labels, tfidfVecTrain_x, tfidfVecTest_x):
+            Thread.__init__(self)
+            self.labels = labels
+            self.test_labels = test_labels
+            self.tfidfVecTrain_x = tfidfVecTrain_x
+            self.tfidfVecTest_x = tfidfVecTest_x
+
+        def run(self):
+            print("\nThread 3 - mnbtf...\n")
+            mnbtf(labels, test_labels, tfidfVecTrain_x,  tfidfVecTest_x)
+
+           
+    class T4 (Thread):
+        def __init__ (self, labels, test_labels, countVecTrain_x, countVecTest_x):
+            Thread.__init__(self)
+            self.labels = labels
+            self.test_labels = test_labels
+            self.countVecTrain_x = countVecTrain_x
+            self.countVecTest_x = countVecTest_x
+
+        def run(self):
+            print("\nThread 4 - mbbcv...\n")
+            mbbcv(labels, test_labels, countVecTrain_x,  countVecTest_x)
+
+         
+
+   
+    
+
+    
+
+    
+
+
+
+
     if lt == 'lt':
-        LogicRegTFIDF(labels, test_labels, tfidfVecTrain_x,  tfidfVecTest_x)
+        LogicRegTFIDF_ = T1 (labels, test_labels, tfidfVecTrain_x,  tfidfVecTest_x)
+        LogicRegTFIDF_.start()
+        # LogicRegTFIDF_.join()
     if lc == 'lc':
-        LogRegression_CountVector(labels, test_labels, countVecTrain_x, countVecTest_x)
+        LogRegression_CountVector_ = T2 (labels, test_labels, countVecTrain_x, countVecTest_x)
+        LogRegression_CountVector_.start()
+        # LogRegression_CountVector_.join()
+
     if mt == 'mt':
-        mnbtf(labels, test_labels, tfidfVecTrain_x,  tfidfVecTest_x)
+        mnbtf_ = T3 (labels, test_labels, tfidfVecTrain_x,  tfidfVecTest_x)
+        mnbtf_.start()
+        # mnbtf_.join()
+        
     if mc == 'mc':
-        mbbcv(labels, test_labels, countVecTrain_x,  countVecTest_x)
+        mbbcv_ = T4 (labels, test_labels, countVecTrain_x,  countVecTest_x)
+        mbbcv_.start()
+        # mbbcv_.join()
+
+    if lt == 'lt':
+        LogicRegTFIDF_.join()
+        # LogicRegTFIDF_.finish()
+    if lc == 'lc':
+        LogRegression_CountVector_.join()
+        # LogRegression_CountVector_.finish()
+
+    if mt == 'mt':
+        mnbtf_.join()
+        
+    if mc == 'mc':
+        mbbcv_.join()
+
+# ===============================
+
+
+
+
+
+    # if lt == 'lt':
+    #     LogicRegTFIDF(labels, test_labels, tfidfVecTrain_x,  tfidfVecTest_x)
+    # if lc == 'lc':
+    #     LogRegression_CountVector(labels, test_labels, countVecTrain_x, countVecTest_x)
+    # if mt == 'mt':
+    #     mnbtf(labels, test_labels, tfidfVecTrain_x,  tfidfVecTest_x)
+    # if mc == 'mc':
+    #     mbbcv(labels, test_labels, countVecTrain_x,  countVecTest_x)
 
 
 """
