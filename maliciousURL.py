@@ -130,6 +130,8 @@ def tokenizerURL(url):
     print ("Tokenizer in transit...\n")
 
 
+
+
 def vectorizer(train_df,test_df):
      
     countVec = CountVectorizer(tokenizer= tokenizerURL)
@@ -137,16 +139,115 @@ def vectorizer(train_df,test_df):
 
     print("\nVectorizng data frames.... may take about a minute...\n")
 
-    print("\nTraining Count Vectorizer...\n")
-    countVecTrain_x = countVec.fit_transform(train_df['URLs'])
+    # print("\nTraining Count Vectorizer...\n")
+    # countVecTrain_x = countVec.fit_transform(train_df['URLs'])
 
-    print("\nTraining TF-IDF Vectorizer...\n")
-    tfidfVecTrain_x = tfidfVec.fit_transform(train_df['URLs'])
+    # print("\nTraining TF-IDF Vectorizer...\n")
+    # tfidfVecTrain_x = tfidfVec.fit_transform(train_df['URLs'])
 
-    print("\nTesting Count Vectorizer...\n")
-    countVecTest_x = countVec.transform(test_df['URLs'])
-    print("\nTesting TFIDF Vectorizer...\n")
-    tfidfVecTest_x = tfidfVec.transform(test_df['URLs'])
+    # print("\nTesting Count Vectorizer...\n")
+    # countVecTest_x = countVec.transform(test_df['URLs'])
+
+    # print("\nTesting TFIDF Vectorizer...\n")
+    # tfidfVecTest_x = tfidfVec.transform(test_df['URLs'])
+
+
+    class T1 (Thread):
+        def __init__ (self, countVec, train_df):
+            Thread.__init__(self)
+            self.countVecTrain_x = None
+            self.countVec = countVec
+            self.train_df = train_df
+            print(f'countVec = {countVec}')
+            print(f'train_df = {train_df}')
+
+        def run(self):
+            print("\nThread 1 - Training Count Vectorizer...\n")
+            countVecTrain_x = self.countVec.fit_transform(self.train_df['URLs'])
+            self.countVecTrain_x = countVecTrain_x
+
+        def join(self, *args):
+            Thread.join(self, *args)
+            return self.countVecTrain_x
+
+    class T2 (Thread):
+        def __init__ (self, tfidfVec, train_df):
+            Thread.__init__(self)
+            self.tfidfVecTrain_x = None
+            self.tfidfVec = tfidfVec
+            self.train_df = train_df
+            print(f'tfidfVec = {tfidfVec}')
+            print(f'train_df = {train_df}')
+
+        def run(self):
+            print("\nThread 2 - Training TF-IDF Vectorizer...\n")
+            tfidfVecTrain_x = self.tfidfVec.fit_transform(self.train_df['URLs'])
+            self.tfidfVecTrain_x = tfidfVecTrain_x
+
+        def join(self, *args):
+            Thread.join(self, *args)
+            return self.tfidfVecTrain_x
+
+
+    class T3 (Thread):
+        def __init__ (self, countVec, test_df):
+            Thread.__init__(self)
+            self.countVecTest_x = None
+            self.countVec = countVec
+            self.test_df = test_df
+            print(f'countVec = {countVec}')
+            print(f'test_df = {test_df}')
+
+        def run(self):
+            print("\nThread 3 - Testing Count Vectorizer...\n")
+            countVecTest_x = self.countVec.transform(self.test_df['URLs'])
+            self.countVecTest_x = countVecTest_x
+
+        def join(self, *args):
+            Thread.join(self, *args)
+            return self.countVecTest_x
+
+    class T4 (Thread):
+        def __init__ (self, tfidfVec, test_df):
+            Thread.__init__(self)
+            self.tfidfVecTest_x = None
+            self.tfidfVec = tfidfVec
+            self.test_df = test_df
+            print(f'tfidfVec = {tfidfVec}')
+            print(f'test_df = {test_df}')
+
+        def run(self):
+            print("\nThread 4 - Testing TFIDF Vectorizer...\n")
+            tfidfVecTest_x = self.tfidfVec.transform(self.test_df['URLs'])
+            self.tfidfVecTest_x = tfidfVecTest_x
+
+        def join(self, *args):
+            Thread.join(self, *args)
+            return self.tfidfVecTest_x
+
+
+    countVecTrain = T1(countVec, train_df)
+    countVecTrain.start()
+
+    tfidfVecTrain = T2(tfidfVec, train_df)
+    tfidfVecTrain.start()
+    
+
+    countVecTest = T3(countVec, test_df)
+    countVecTest.start()
+
+    tfidfVecTest = T4(tfidfVec, test_df)
+    tfidfVecTest.start()
+
+    countVecTrain_x = countVecTrain.join()
+    tfidfVecTrain_x = tfidfVecTrain.join()
+    countVecTest_x = countVecTest.join()
+    tfidfVecTest_x = tfidfVecTest.join()
+    
+    # print(f'countVecTrain_x = {countVecTrain_x}')
+    # print(f'tfidfVecTrain_x = {tfidfVecTrain_x}')
+    # print(f'countVecTest_x = {countVecTest_x}')
+    # print(f'tfidfVecTest_x = {tfidfVecTest_x}')
 
     print("\nVectorizing complete...\n")
 
