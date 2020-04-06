@@ -29,14 +29,14 @@ def csvImport():
     print("#####Loading CSV Data...#####")
     url_df = pd.read_csv("sample.csv")
 
-    # Only taking URLs stored to test_url
-    test_url = url_df['URLs'][4]
+    # # Only taking URLs stored to test_url
+    # test_url = url_df['URLs'][4]
 
 
     print("\nSample of our data of {}".format(len(url_df)))
     print(url_df.head())
 
-    return url_df, test_url
+    return url_df
 """
 train_test Description:
     @param: url_df: takes the sample.csv and store it in an pandas array
@@ -86,7 +86,8 @@ def train_test_graph(train_df, test_df):
     plt.title('Good and Bad URL datasets')
     plt.xticks(ind + width /2, ('Train', 'Test'))
     plt.legend(loc='best')
-    plt.show(block=False)
+    # plt.show(block=False)
+    plt.show()
     
 
 """
@@ -149,7 +150,7 @@ def vectorizer(train_df,test_df):
     print("\nVectorizing complete...\n")
 
     return countVecTrain_x, tfidfVecTrain_x, countVecTest_x, tfidfVecTest_x
-
+testingscore = 0;
 def algorithmReport(confuMatrix, score, classReport):
     plt.figure(figsize=(5,5))
     sns.heatmap(confuMatrix, annot=True, fmt="d", lineWidths=.5,square = True, cmap ='Blues', annot_kws={"size": 16}, xticklabels=['bad','good'], yticklabels=['bad', 'good'])
@@ -160,11 +161,12 @@ def algorithmReport(confuMatrix, score, classReport):
     plt.ylabel('Predicted Label', size = 20)
 
     title = 'Accuracy Score:  {0:.4}'.format(score)
+    print ("/nScore value: ", score)
     plt.title(title, size = 20)
-    
+    testingscore = score * 100
     print(classReport)
     print("\nReport Generator Defined...\n")
-    plt.show(block=True)
+    plt.show()
     
 
 def LogicRegTFIDF(labels, test_labels, tfidfVecTrain_x, tfidfVecTest_x):
@@ -204,7 +206,11 @@ main Description
     Calls the respective methods and return call by function method
 """
 def main():
-    url_df, test_url = csvImport()
+    test_url = input("\n\nPlease input test URL or press Enter use default test URL:")
+    if test_url == '':
+        test_url = 'ussoccer.com/News/Federation-Services/2009/06/University-Of-Miami-President-Donna-E-Shalala-Joins-Team-To-Bring-FIFA-World-Cup-To-United-States-In.aspx'
+
+    url_df = csvImport()
     train_df, test_df, labels, test_labels = train_test(url_df)
     train_test_graph(train_df,test_df)
     
@@ -217,12 +223,10 @@ def main():
 
     countVecTrain_x, tfidfVecTrain_x, countVecTest_x, tfidfVecTest_x = vectorizer(train_df, test_df)
     LogicRegTFIDF(labels, test_labels, tfidfVecTrain_x, tfidfVecTest_x)
-    LogRegression_CountVector(labels, test_labels, countVecTrain_x, countVecTest_x)
-
+    # LogRegression_CountVector(labels, test_labels, countVecTrain_x, countVecTest_x)
 
 """
 Calling main
 """
 if __name__ == '__main__':
     main()
-
