@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python3.6
 
 import pandas as pd                                                             # Handles csv files
 import numpy as np                                                              # array
@@ -19,56 +19,53 @@ from sklearn.metrics import confusion_matrix, classification_report             
 import seaborn as sns
 import argparse                                                                 #  utilizing flags to allow user's choice
 
-def infoDisplay():
-    print("Welcome to malicious URL analyzer 1.0...\n")
-    print("Description...\n")
-    print("    -t: this flag allows the user to pick a moudle to use to classify good | bad URL\n")
-    print("        LGC:  Linear Regression w/ Count Vectorizer\n")
-    print("        LGT:  Linear Regression w/ TFIDF Vectorizer\n")
-    print("        MNBC: Multinomial Naive Bayesian w/ Count Vectorizer\n")
-    print("        MNBT: Multinomial Naive Bayesian w/ TFIDF Vectorizer\n")
-    print("    -u: this fflag allows the user to input any url to be analyzed to clasisfy good | bad URL\n")
 
 
+"""
+Choices
+    Takes user input as flags and use them in other functions
+"""
 def choices():
     parser = argparse.ArgumentParser(description='Malicious URL analyzer with Machine Learning')
-    parser.add_argument('-t', '--type', metavar='', help="Input the type of module to use")
-    paresr.add_argument('-u', '--url',  metavar='', help="Input the URL you want to scan")
+
+    parser.add_argument('-t', '--type', required=True, metavar='', help="Input the type of module to use")
+    parser.add_argument('-u', '--url', required=True, metavar='', help="Input the URL you want to scan")
     parser.add_argument('-i', '--info', action = infoDisplay(), metavar='', help='Descripton of the Program')
 
     args = parser.parse_args()
 
     return args
 
-def menuSwitch(args):
-    if(args.info == 'info'):
-        infoDisplay()
-    if(args.type == 'LGC'):
-        pass
-    if(args.type == 'LGT'):
-        pass
-    if(args.type == 'MNBC'):
-        pass
-    if(args.type == 'MNBT'):
-        pass
+
 
 
 """
 csvImports Description:
     opens the csv file and store it using pandas.
 """
-def csvImport():
+
+def csvImport(args):
+    #args = choices()
     # Loading the data utilizing pandas
 
     print("#####Loading CSV Data...#####")
     url_df = pd.read_csv("sample.csv")
 
-    # Only taking URLs stored to test_url
-    test_url = url_df['URLs'][4]
-
-
     print("\nSample of our data of {}".format(len(url_df)))
     print(url_df.head())
+
+    # Only taking URLs stored to test_url
+    """
+    if args.url == '':
+        test_url = url_df['URLs'][4]
+    else:
+        test_url = args.url
+    """
+    if args.url:
+        test_url = args.url
+    
+    print("\n\n#####UserSelectedURL...#####")
+    print(test_url)
 
     return url_df, test_url
 """
@@ -106,16 +103,21 @@ def train_test_graph(train_df, test_df):
     
     print("\n#####Generating testing and training graph#####\n")
     # getting count of actual train set and test set
+    print("place holder 2")
     barGraphTrain = pd.value_counts(train_df['Class'])
+    print("place holder 3")
     barGraphTest = pd.value_counts(test_df['Class'])
 
     N = 2
     ind = np.arange(N)
     width = 0.35
+    print("place holder 3.5")
+    print(barGraphTest)
+    print(barGraphTrain)
+    #plt.bar(ind, barGraphTrain, width, label='Train')
+    print("place holer 4")
 
-    plt.bar(ind, barGraphTrain, width, label='Train')
     plt.bar(ind + width, barGraphTest, width, label = 'Test')
-
     plt.ylabel('Data sets')
     plt.xlabel('Training/Testing')
     plt.title('Good and Bad URL datasets')
@@ -276,28 +278,66 @@ def mbbcv(labels, test_labels, countVecTrain_x, countVecTest_x):
     print("Multinomial Naive Bayesian w/ Count Vectorizer")
     algorithmReport(cmatrix_mnb_count, score_mnb_count, creport_mnb_count)
 
+def infoDisplay():
+    print("Welcome to malicious URL analyzer 1.0...\n")
+    print("Description...\n")
+    print("    -t: this flag allows the user to pick a moudle to use to classify good | bad URL\n")
+    print("        LGC:  Linear Regression w/ Count Vectorizer\n")
+    print("        LGT:  Linear Regression w/ TFIDF Vectorizer\n")
+    print("        MNBC: Multinomial Naive Bayesian w/ Count Vectorizer\n")
+    print("        MNBT: Multinomial Naive Bayesian w/ TFIDF Vectorizer\n")
+    print("    -u: this fflag allows the user to input any url to be analyzed to clasisfy good | bad URL\n")
+
 """
 main Description
     Calls the respective methods and return call by function method
 """
 def main():
-    url_df, test_url = csvImport()
+    args = choices()
+
+    url_df, test_url = csvImport(args)
     train_df, test_df, labels, test_labels = train_test(url_df)
-    train_test_graph(train_df,test_df)
-    
+
+    print("place holder 1")
+
+    #train_test_graph(train_df,test_df)
+    # it stops here?
+    print("place holer x")
+    countVecTrain_x, tfidfVecTrain_x, countVecTest_x, tfidfVecTest_x = vectorizer(train_df, test_df)
+
     print("Full URL from the sample...\n")
     print(test_url)
 
     print("\nURL after tokenizer...\n")
     tokenized_url = tokenizerURL(test_url)
     print(tokenized_url)
-
     
-    countVecTrain_x, tfidfVecTrain_x, countVecTest_x, tfidfVecTest_x = vectorizer(train_df, test_df)
-    LogicRegTFIDF(labels, test_labels, tfidfVecTrain_x,  tfidfVecTest_x)
-    LogRegression_CountVector(labels, test_labels, countVecTrain_x, countVecTest_x)
-    mnbtf(labels, test_labels, tfidfVecTrain_x,  tfidfVecTest_x)
-    mbbcv(labels, test_labels, countVecTrain_x,  countVecTest_x)
+    if(args.info == ''):
+        infoDisplay()
+    if(args.type == 'LGC'):
+        LogRegression_CountVector(labels, test_labels, countVecTrain_x, countVecTest_x)
+    if(args.type == 'LGT'):
+        LogicRegTFIDF(labels, test_labels, tfidfVecTrain_x,  tfidfVecTest_x)
+
+    if(args.type == 'MNBC'):
+        mbbcv(labels, test_labels, countVecTrain_x,  countVecTest_x)
+
+    if(args.type == 'MNBT'):
+        mnbtf(labels, test_labels, tfidfVecTrain_x,  tfidfVecTest_x)
+
+"""
+def menuSwitch(args):
+    if(args.info == 'info'):
+        infoDisplay()
+    if(args.type == 'LGC'):
+        pass
+    if(args.type == 'LGT'):
+        pass
+    if(args.type == 'MNBC'):
+        pass
+    if(args.type == 'MNBT'):
+        pass
+"""
 
 
 """
