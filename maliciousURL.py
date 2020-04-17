@@ -17,6 +17,40 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import confusion_matrix, classification_report             # helper library to use metric functions
 
 import seaborn as sns
+import argparse                                                                 #  utilizing flags to allow user's choice
+
+def infoDisplay():
+    print("Welcome to malicious URL analyzer 1.0...\n")
+    print("Description...\n")
+    print("    -t: this flag allows the user to pick a moudle to use to classify good | bad URL\n")
+    print("        LGC:  Linear Regression w/ Count Vectorizer\n")
+    print("        LGT:  Linear Regression w/ TFIDF Vectorizer\n")
+    print("        MNBC: Multinomial Naive Bayesian w/ Count Vectorizer\n")
+    print("        MNBT: Multinomial Naive Bayesian w/ TFIDF Vectorizer\n")
+    print("    -u: this fflag allows the user to input any url to be analyzed to clasisfy good | bad URL\n")
+
+
+def choices():
+    parser = argparse.ArgumentParser(description='Malicious URL analyzer with Machine Learning')
+    parser.add_argument('-t', '--type', metavar='', help="Input the type of module to use")
+    paresr.add_argument('-u', '--url',  metavar='', help="Input the URL you want to scan")
+    parser.add_argument('-i', '--info', action = infoDisplay(), metavar='', help='Descripton of the Program')
+
+    args = parser.parse_args()
+
+    return args
+
+def menuSwitch(args):
+    if(args.info == 'info'):
+        infoDisplay()
+    if(args.type == 'LGC'):
+        pass
+    if(args.type == 'LGT'):
+        pass
+    if(args.type == 'MNBC'):
+        pass
+    if(args.type == 'MNBT'):
+        pass
 
 
 """
