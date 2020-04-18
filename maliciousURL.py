@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python3.6
 
 import pandas as pd                                                             # Handles csv files
 import numpy as np                                                              # array
@@ -19,56 +19,52 @@ from sklearn.metrics import confusion_matrix, classification_report             
 import seaborn as sns
 import argparse                                                                 #  utilizing flags to allow user's choice
 
-def infoDisplay():
-    print("Welcome to malicious URL analyzer 1.0...\n")
-    print("Description...\n")
-    print("    -t: this flag allows the user to pick a moudle to use to classify good | bad URL\n")
-    print("        LGC:  Linear Regression w/ Count Vectorizer\n")
-    print("        LGT:  Linear Regression w/ TFIDF Vectorizer\n")
-    print("        MNBC: Multinomial Naive Bayesian w/ Count Vectorizer\n")
-    print("        MNBT: Multinomial Naive Bayesian w/ TFIDF Vectorizer\n")
-    print("    -u: this fflag allows the user to input any url to be analyzed to clasisfy good | bad URL\n")
 
 
+"""
+Choices
+    Takes user input as flags and use them in other functions
+"""
 def choices():
     parser = argparse.ArgumentParser(description='Malicious URL analyzer with Machine Learning')
-    parser.add_argument('-t', '--type', metavar='', help="Input the type of module to use")
-    paresr.add_argument('-u', '--url',  metavar='', help="Input the URL you want to scan")
+
+    parser.add_argument('-t', '--type', required=True, metavar='', help="Input the type of module to use")
+    parser.add_argument('-u', '--url', required=True, metavar='', help="Input the URL you want to scan")
     parser.add_argument('-i', '--info', action = infoDisplay(), metavar='', help='Descripton of the Program')
 
     args = parser.parse_args()
 
     return args
 
-def menuSwitch(args):
-    if(args.info == 'info'):
-        infoDisplay()
-    if(args.type == 'LGC'):
-        pass
-    if(args.type == 'LGT'):
-        pass
-    if(args.type == 'MNBC'):
-        pass
-    if(args.type == 'MNBT'):
-        pass
+
 
 
 """
 csvImports Description:
     opens the csv file and store it using pandas.
 """
-def csvImport():
+
+def csvImport(args):
     # Loading the data utilizing pandas
 
-    print("#####Loading CSV Data...#####")
+    print("-----Loading CSV Data-----")
     url_df = pd.read_csv("sample.csv")
-
-    # Only taking URLs stored to test_url
-    test_url = url_df['URLs'][4]
-
 
     print("\nSample of our data of {}".format(len(url_df)))
     print(url_df.head())
+
+    # Only taking URLs stored to test_url
+    """
+    if args.url == '':
+        test_url = url_df['URLs'][4]
+    else:
+        test_url = args.url
+    """
+    if args.url:
+        test_url = args.url
+
+    print("\n\n-----UserSelectedURL-----")
+    print("-URL: ",test_url)
 
     return url_df, test_url
 """
@@ -86,12 +82,12 @@ def train_test(url_df):
     labels = train_df['Class']
     test_labels = test_df['Class']
     
-    print("\n#####Spliting Train and Testing...##### \n")
+    print("\n-----Spliting Train and Testing-----")
 
     # number set to show before bar graph
-    print("\nCounting splited data frames...\n")
-    print("Training Data Sample: {}".format(len(train_df)))
-    print("Testing Data Sample:  {}".format(len(test_df)))
+    print("\n-Counting splited data frames...\n")
+    print("-Training Data Sample: {}".format(len(train_df)))
+    print("-Testing Data Sample:  {}".format(len(test_df)))
 
     return train_df, test_df, labels, test_labels
 
@@ -104,7 +100,7 @@ def train_test_graph(train_df, test_df):
     # This is where we generate a bar graph...
 
     
-    print("\n#####Generating testing and training graph#####\n")
+    print("\n-----Generating testing and training graph-----\n")
     # getting count of actual train set and test set
     barGraphTrain = pd.value_counts(train_df['Class'])
     barGraphTest = pd.value_counts(test_df['Class'])
@@ -112,18 +108,20 @@ def train_test_graph(train_df, test_df):
     N = 2
     ind = np.arange(N)
     width = 0.35
-
+    
     plt.bar(ind, barGraphTrain, width, label='Train')
-    plt.bar(ind + width, barGraphTest, width, label = 'Test')
 
+    plt.bar(ind + width, barGraphTest, width, label = 'Test')
     plt.ylabel('Data sets')
     plt.xlabel('Training/Testing')
     plt.title('Good and Bad URL datasets')
     plt.xticks(ind + width /2, ('Train', 'Test'))
     plt.legend(loc='best')
-    #plt.ion()
-    #plt.show(block=True)
+    plt.ion()
+    plt.show(block=True)
     plt.show()
+
+    print("-Displayed...")
 """
 tokenizerURL Description:
     @param url: takes one of the url from csvImport method from test_url and tokenize the url
@@ -168,24 +166,30 @@ def vectorizer(train_df,test_df):
     countVec = CountVectorizer(tokenizer= tokenizerURL)
     tfidfVec= TfidfVectorizer(tokenizer=tokenizerURL)
 
-    print("\nVectorizng data frames.... may take about a minute...\n")
+    print("\n-----Vectorizng data frames-----\n")
+    print("-May take a minute...\n")
 
-    print("\nTraining Count Vectorizer...\n")
+    print("-Training Count Vectorizer...")
     countVecTrain_x = countVec.fit_transform(train_df['URLs'])
+    print("Task 1/4 -Complete-\n")
 
-    print("\nTraining TF-IDF Vectorizer...\n")
+    print("-Training TF-IDF Vectorizer...")
     tfidfVecTrain_x = tfidfVec.fit_transform(train_df['URLs'])
+    print("Task 2/4 -Complete-\n")
 
-    print("\nTesting Count Vectorizer...\n")
+    print("-Testing Count Vectorizer...")
     countVecTest_x = countVec.transform(test_df['URLs'])
-    print("\nTesting TFIDF Vectorizer...\n")
+    print("Task 3/4 -Complete-\n")
+
+    print("-Testing TFIDF Vectorizer...")
     tfidfVecTest_x = tfidfVec.transform(test_df['URLs'])
+    print("Task 4/4 -Complete-\n")
 
-    print("\nVectorizing complete...\n")
+    print("-Vectorizing complete...\n")
 
-    return countVecTrain_x, tfidfVecTrain_x, countVecTest_x, tfidfVecTest_x
+    return countVecTrain_x, tfidfVecTrain_x, countVecTest_x, tfidfVecTest_x, countVec, tfidfVec
 
-def algorithmReport(confuMatrix, score, classReport):
+def algorithmReport(confuMatrix, score, classReport, ourPrediction):
 
     confuMatrix = confuMatrix.T
 
@@ -204,9 +208,11 @@ def algorithmReport(confuMatrix, score, classReport):
     plt.ion()
     plt.show(block=True)
 
-    print("\nReport Generator Defined...\n")
+    print("-Report Generator Completed...\n")
+    print("-----Malicious URL Analyzed-----")
+    print("-URl Analyzed Result: ", ourPrediction)
 
-def LogicRegTFIDF(labels, test_labels,  tfidfVecTrain_x,  tfidfVecTest_x):
+def LogicRegTFIDF(labels, test_labels,  tfidfVecTrain_x,  tfidfVecTest_x, test_url, tfidfVec):
     # Training the Logistic Regression Algorithm
 
     LR_Tfidf = LogisticRegression(solver ='lbfgs')
@@ -217,12 +223,17 @@ def LogicRegTFIDF(labels, test_labels,  tfidfVecTrain_x,  tfidfVecTest_x):
     cmatrixLRTfidf = confusion_matrix(predictionsLRTfidf, test_labels)
     classReport_LRTfidf = classification_report(predictionsLRTfidf, test_labels)
 
-    print("\nModel generating...\n")
-    print("Logistic Regression w/ TfidfVectorizer")
-    algorithmReport(cmatrixLRTfidf, score_LR_Count, classReport_LRTfidf)
+    test_url = [test_url]
+    test_url = tfidfVec.transform(test_url)
+    ourPrediction = LR_Tfidf.predict(test_url)
+
+    print("\n-----Model Analyzer-----\n")
+    print("-Model generating...\n")
+    print("-Logistic Regression w/ TfidfVectorizer")
+    algorithmReport(cmatrixLRTfidf, score_LR_Count, classReport_LRTfidf, ourPrediction)
     
 # Logistic Regression with Vector Count
-def LogRegression_CountVector (labels, test_labels, countVecTrain_x, countVecTest_x):
+def LogRegression_CountVector (labels, test_labels, countVecTrain_x, countVecTest_x, test_url, countVec):
     #train model
     LR_CountVector = LogisticRegression(solver='lbfgs')
     LR_CountVector.fit(countVecTrain_x, labels)
@@ -232,13 +243,20 @@ def LogRegression_CountVector (labels, test_labels, countVecTrain_x, countVecTes
     predictionsCountVector = LR_CountVector.predict(countVecTest_x)
     cmatrixCountVector = confusion_matrix(test_labels, predictionsCountVector)
     creportCountVector = classification_report(test_labels,predictionsCountVector)
+    test_url = [test_url]
+    test_url = countVec.transform(test_url)
 
-    print("\nModel generating...\n")
-    print("Logistic Regression w/ Count Vector")
-    algorithmReport(cmatrixCountVector, score_LR_CountVector, creportCountVector)
+    ourPrediction = LR_CountVector.predict(test_url)
+  
+    #ourPrediction = ourPrediction.reshape(-1,1)
+
+    print("\n-----Model Analyzer-----\n")
+    print("-Model generating...\n")
+    print("-Logistic Regression w/ Count Vector")
+    algorithmReport(cmatrixCountVector, score_LR_CountVector, creportCountVector, ourPrediction)
 
 
-def mnbtf(labels, test_labels, tfidfVecTrain_X, tfidfVecTest_x):
+def mnbtf(labels, test_labels, tfidfVecTrain_X, tfidfVecTest_x, test_url, tfidfVec):
        # Multinomial Naive Bayesian with TF-IDF
  
    # Train the model
@@ -251,13 +269,17 @@ def mnbtf(labels, test_labels, tfidfVecTrain_X, tfidfVecTest_x):
     predictions_mnb_tfidf = mnb_tfidf.predict(tfidfVecTest_x)
     cmatrix_mnb_tfidf = confusion_matrix(test_labels, predictions_mnb_tfidf)
     creport_mnb_tfidf = classification_report(test_labels, predictions_mnb_tfidf)
+    test_url = [test_url]
+    test_url = tfidfVec.transform(test_url)
+
+    ourPrediction = mnb_tfidf.predict(test_url)
     
-    print("\n### Model Built ###\n")
-    print("\nModel generating...\n")
-    print("Multinomial Naive Bayesian w/ TFIDF")
-    algorithmReport(cmatrix_mnb_tfidf, score_mnb_tfidf, creport_mnb_tfidf)
+    print("\n-----Model Analyzer-----\n")
+    print("-Model generating...\n")
+    print("-Multinomial Naive Bayesian w/ TFIDF")
+    algorithmReport(cmatrix_mnb_tfidf, score_mnb_tfidf, creport_mnb_tfidf, ourPrediction)
     
-def mbbcv(labels, test_labels, countVecTrain_x, countVecTest_x):
+def mbbcv(labels, test_labels, countVecTrain_x, countVecTest_x, test_url, countVec):
     # Multinomial Naive Bayesian with Count Vectorizer
 
     # Train the model
@@ -270,34 +292,62 @@ def mbbcv(labels, test_labels, countVecTrain_x, countVecTest_x):
     predictions_mnb_count = mnb_count.predict(countVecTest_x)
     cmatrix_mnb_count = confusion_matrix(test_labels, predictions_mnb_count)
     creport_mnb_count = classification_report(test_labels, predictions_mnb_count)
+    test_url = [test_url]
+    test_url = countVec.transform(test_url)
 
-    print("\n### Model Built ###\n")
-    print("\nModel generating...\n")
-    print("Multinomial Naive Bayesian w/ Count Vectorizer")
-    algorithmReport(cmatrix_mnb_count, score_mnb_count, creport_mnb_count)
+    ourPrediction = mnb_count.predict(test_url)
+
+    print("\n-----Model Analyzer-----\n")
+    print("-Model generating...\n")
+    print("-Multinomial Naive Bayesian w/ Count Vectorizer")
+    algorithmReport(cmatrix_mnb_count, score_mnb_count, creport_mnb_count, ourPrediction)
+
+def infoDisplay():
+    print("Welcome to malicious URL analyzer 1.0...\n")
+    print("Description...\n")
+    print("    -t: this flag allows the user to pick a moudle to use to classify good | bad URL\n")
+    print("        LGC:  Linear Regression w/ Count Vectorizer\n")
+    print("        LGT:  Linear Regression w/ TFIDF Vectorizer\n")
+    print("        MNBC: Multinomial Naive Bayesian w/ Count Vectorizer\n")
+    print("        MNBT: Multinomial Naive Bayesian w/ TFIDF Vectorizer\n")
+    print("    -u: this fflag allows the user to input any url to be analyzed to clasisfy good | bad URL\n")
 
 """
 main Description
     Calls the respective methods and return call by function method
 """
 def main():
-    url_df, test_url = csvImport()
-    train_df, test_df, labels, test_labels = train_test(url_df)
-    train_test_graph(train_df,test_df)
+    args = choices()
+
+    url_df, test_url = csvImport(args)
     
-    print("Full URL from the sample...\n")
+    train_df, test_df, labels, test_labels = train_test(url_df)
+
+
+    train_test_graph(train_df,test_df)
+
+    countVecTrain_x, tfidfVecTrain_x, countVecTest_x, tfidfVecTest_x, countVec, tfidfVec = vectorizer(train_df, test_df)
+
+    print("-----Initiating Tokenizer-----\n")
     print(test_url)
 
-    print("\nURL after tokenizer...\n")
+    print("\n-----Tokenized Result-----\n")
     tokenized_url = tokenizerURL(test_url)
     print(tokenized_url)
-
     
-    countVecTrain_x, tfidfVecTrain_x, countVecTest_x, tfidfVecTest_x = vectorizer(train_df, test_df)
-    LogicRegTFIDF(labels, test_labels, tfidfVecTrain_x,  tfidfVecTest_x)
-    LogRegression_CountVector(labels, test_labels, countVecTrain_x, countVecTest_x)
-    mnbtf(labels, test_labels, tfidfVecTrain_x,  tfidfVecTest_x)
-    mbbcv(labels, test_labels, countVecTrain_x,  countVecTest_x)
+    if(args.info):
+        infoDisplay()
+    if(args.type == 'LGC'):
+        LogRegression_CountVector(labels, test_labels, countVecTrain_x, countVecTest_x, test_url, countVec)
+    if(args.type == 'LGT'):
+        LogicRegTFIDF(labels, test_labels, tfidfVecTrain_x,  tfidfVecTest_x, test_url, tfidfVec)
+
+    if(args.type == 'MNBC'):
+        mbbcv(labels, test_labels, countVecTrain_x,  countVecTest_x, test_url, countVec)
+
+    if(args.type == 'MNBT'):
+        mnbtf(labels, test_labels, tfidfVecTrain_x,  tfidfVecTest_x, test_url, tfidfVec)
+
 
 
 """
@@ -305,5 +355,3 @@ Calling main
 """
 if __name__ == '__main__':
     main()
-
-
