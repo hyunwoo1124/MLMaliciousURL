@@ -1,4 +1,3 @@
-#!/usr/bin/python3.6
 
 import pandas as pd                                                             # Handles csv files
 import numpy as np                                                              # array
@@ -101,6 +100,7 @@ def train_test_graph(train_df, test_df):
 
     
     print("\n-----Generating testing and training graph-----\n")
+    print("---[Exit The Graph to Continue]---")
     # getting count of actual train set and test set
     barGraphTrain = pd.value_counts(train_df['Class'])
     barGraphTest = pd.value_counts(test_df['Class'])
@@ -108,17 +108,16 @@ def train_test_graph(train_df, test_df):
     N = 2
     ind = np.arange(N)
     width = 0.35
-    
-    plt.bar(ind, barGraphTrain, width, label='Train')
+    plt.bar(ind, barGraphTrain, width, label='Good')
 
-    plt.bar(ind + width, barGraphTest, width, label = 'Test')
+    plt.bar(ind + width, barGraphTest, width, label = 'Bad')
     plt.ylabel('Data sets')
     plt.xlabel('Training/Testing')
     plt.title('Good and Bad URL datasets')
     plt.xticks(ind + width /2, ('Train', 'Test'))
     plt.legend(loc='best')
-    plt.ion()
-    plt.show(block=True)
+    #plt.ion()
+    #plt.show(block=True)
     plt.show()
 
     print("-Displayed...")
@@ -205,8 +204,11 @@ def algorithmReport(confuMatrix, score, classReport, ourPrediction):
     plt.title(title, size = 20)
 
     print(classReport)
-    plt.ion()
-    plt.show(block=True)
+    #plt.ion()
+    print("---[Exit the graph to continue]---")
+
+    plt.show()
+
 
     print("-Report Generator Completed...\n")
     print("-----Malicious URL Analyzed-----")
@@ -243,9 +245,9 @@ def LogRegression_CountVector (labels, test_labels, countVecTrain_x, countVecTes
     predictionsCountVector = LR_CountVector.predict(countVecTest_x)
     cmatrixCountVector = confusion_matrix(test_labels, predictionsCountVector)
     creportCountVector = classification_report(test_labels,predictionsCountVector)
+
     test_url = [test_url]
     test_url = countVec.transform(test_url)
-
     ourPrediction = LR_CountVector.predict(test_url)
   
     #ourPrediction = ourPrediction.reshape(-1,1)
@@ -335,6 +337,7 @@ def main():
     tokenized_url = tokenizerURL(test_url)
     print(tokenized_url)
     
+    print("\n---[Generating Module, please wait]---")
     if(args.info):
         infoDisplay()
     if(args.type == 'LGC'):
