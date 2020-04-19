@@ -15,13 +15,13 @@ Summary & Description:
     Implemented 4 data modules: 
 
 
-        - Linear Regression w/ Count Vectorizer
+        - LGC: Linear Regression w/ Count Vectorizer
 
-        - Linear Regression w/ TFIDF Vectorizer
+        - LGT: Linear Regression w/ TFIDF Vectorizer
 
-        - Multinomial Naive Bayesian w/ Count Vectorizer
+        - MNBC: Multinomial Naive Bayesian w/ Count Vectorizer
 
-        - Multinomial Naive Bayesian w/ TFIDF Vectorizer
+        - MNBT: Multinomial Naive Bayesian w/ TFIDF Vectorizer
 
 
     Description:
@@ -35,3 +35,17 @@ Summary & Description:
         
         exploitation and hacking.
 
+
+    How to compile:
+
+        (Your python 3 interpreter: 3.6 or 3.7 recommended. Not compatible with 3.8)
+
+        python3 ./maliciousURL.py 
+
+            (This allows the user to check options)
+
+        python3 ./maliciousURL.py -t <type> -u <url>
+            
+            (-t: LGC, LGT, MNBC, MNBT)
+
+            (-u: www.yourwebsite.com/anything-you-want)
