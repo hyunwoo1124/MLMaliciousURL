@@ -49,3 +49,32 @@ Summary & Description:
             (-t: LGC, LGT, MNBC, MNBT)
 
             (-u: www.yourwebsite.com/anything-you-want)
+
+
+Function
+
+        choices: parse the user input as "flags" to connect with other functions
+
+        csvImport: takes in user input url and parse the csv files
+
+        train_test: split the traning and testing into percentile data
+
+        train_test_graph: uses matplotlib.pylot to spit out our dataframe: testing and training of good and bad url
+
+        tokenizerURL: tokenize our input url into meaningful tokens
+
+        vectorizer: vectorize our data from countVectorizer(word count) and  tfidfVectorizer(frequency)
+
+        algorithmReport: generate a report of our data module to Linear Regression and Multinomail Naive Bayes
+
+        LogiRegTFIDF: logistic Regression module with TFIDF vectorizer, attempts to predict our data
+
+        LogRegression_CountVector: logistic Regression module with count vectorizer, attempts to predict our data
+
+        mnbtf: multinomial naive bayes module with TFIDF vectorizer, attempst to predict our data
+
+        mbbcv: multinomial naive bayes module with count vectorizer, attempts to predict our data
+
+        infoDisplay: displays user input choices
+
+        main: passes the correct parameters to the correct function/methods
