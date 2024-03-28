@@ -1,12 +1,11 @@
 Using Machine Learning to Analyze Detection of Malicious URL
 
 Author:
+    Hyun Woo Kim    |       hyunwoo777@csu.fullerton.edu
 
     Andrew Lopez    |       alopez8969@csu.fullerton.edu
 
     Alex Tran       |       quyen137@csu.fullerton.edu
-
-    Hyun Woo Kim    |       hyunwoo777@csu.fullerton.edu
 
     Tu Tran         |       trankimtu@csu.fullerton.edu
 
